@@ -8,7 +8,13 @@ var http = require("http"),
 app.use(express.static(__dirname));
 
 app.post('/filelist', urlencodedParser, function (req, res) {
-  res.send(fn.createJson(req.body.dirPath));
+    var data = fn.createJson(req.body.dirPath);
+    
+    if (data != undefined) {
+      res.send(data);
+    } else {
+      res.send("error");
+    }    
 });
 
 var fn = {
@@ -23,6 +29,7 @@ var fn = {
       //receive a specified path or path to root directory
       rootPath = path || fn.getSystemDir(process.env.SystemDrive);
       json.files = fs.readdirSync(rootPath);
+      json.root = rootPath;
       //convert to json format
       return JSON.stringify(json);     
     } catch (err) {     

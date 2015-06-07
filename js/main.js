@@ -30,21 +30,33 @@ fn = {
             data: {dirPath: dirPath},
         })
         .done(function(res) {
-            var files = JSON.parse(res).files,
-                arr = [];
+            if (res != "error") {
+                var files = JSON.parse(res).files,
+                    root = JSON.parse(res).root,
+                    arr = [];
+                    path = $("#path");
 
-            $.each(files, function (index, element) {
-                arr.push('<li tabindex="0">' + element + '</li>');
-            });
-            
-            $("#fileList").html(arr.join(""));
+                $.each(files, function (index, element) {
+                    arr.push('<li tabindex="0">' + element + '</li>');
+                });
+                $("#fileList").html(arr.join(""));
 
-            fn.isFile($("li"));
-            fn.setEvent();
+                if (path.html() == "") {
+                    path.html(root);
+                }
+                delete $("#fileList").get(0).listSelectedItem;
+
+                fn.isFile($("li"));
+                fn.setEvent();
+            } else {
+                $("#path").html(fn.removePath());
+                console.log("forbidden!");
+            }
         })
         .fail(function() {
-            console.log("error");
+            console.log("ajax send fail");
         });
+
     },
     keydown: function (e, elem) {
         var key = e.keyCode,
@@ -60,8 +72,7 @@ fn = {
                 this.focus(elem.nextElementSibling) : 
                 this.focus(listItem.firstElementChild);
         } else if (key == 13) {
-            this.getFileList();
-            delete listItem.listSelectedItem;
+            fn.sendRequest(elem);
         }                      
     },
     setEvent: function () {
@@ -72,8 +83,7 @@ fn = {
             fn.keydown(event, this);
         })
         .on("dblclick", "li", function () {
-            fn.getFileList("C:\\Windows");
-            delete this.listSelectedItem;
+            fn.sendRequest(event.target);
         });
     },
     isFile: function (arrOfElem) {
@@ -84,6 +94,23 @@ fn = {
                 $(element).addClass("file");
             }
         });
+    },
+    setPath: function (text) {
+        if (!$(event.target).hasClass("file")) {
+            $("#path").html($("#path").html() + text + "\\");
+        }
+        return $("#path").html();
+    },
+    removePath: function () {
+        var arr = $("#path").html().split("\\");
+        arr.splice(-2);
+        return arr.join("\\") + "\\";
+    },
+    sendRequest: function (element) {
+        var isFile = $(element).hasClass("file");
+        if (!isFile) {
+            fn.getFileList(fn.setPath($(element).html()));    
+        }
     }
 
 };
