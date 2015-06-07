@@ -1,16 +1,14 @@
 var http = require("http"),
     fs = require("fs"),
     express = require("express"),
-    app = express();
+    app = express(),
+    bodyParser = require("body-parser"),
+    urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 app.use(express.static(__dirname));
 
-app.post("/connect", function (req, res) {
-  res.send(fn.createJson());  
-});
-
-app.post('/filelist', function (req, res) {
-  res.send(fn.createJson("D:\\"));
+app.post('/filelist', urlencodedParser, function (req, res) {
+  res.send(fn.createJson(req.body.dirPath));
 });
 
 var fn = {
@@ -22,10 +20,10 @@ var fn = {
     var rootPath,
       json = {};
     try {
-      //get rootPath to directory
-      rootPath = path || process.argv[2] || fn.getSystemDir(process.env.USERPROFILE);
+      //receive a specified path or path to root directory
+      rootPath = path || fn.getSystemDir(process.env.SystemDrive);
       json.files = fs.readdirSync(rootPath);
-      //convert to json format and write into file
+      //convert to json format
       return JSON.stringify(json);     
     } catch (err) {     
       fn.hint();

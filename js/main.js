@@ -2,13 +2,15 @@ fn = {
     focus: function (elem) {
         var sel = $("#fileList").get(0);
 
-        if (sel.listSelectedIted) {
-            document.getElementById(sel.listSelectedIted).style.backgroundColor = "#414141";
-            document.getElementById(sel.listSelectedIted).removeAttribute('id');
+        if (elem.id !== sel.listSelectedItem) {
+            if (sel.listSelectedItem) {
+                document.getElementById(sel.listSelectedItem).style.backgroundColor = "#414141";
+                document.getElementById(sel.listSelectedItem).removeAttribute('id');
+            }
+            elem.style.backgroundColor = "#696969";
+            sel.listSelectedItem = fn.idGen(elem);                    
+            elem.focus();
         }
-        elem.style.backgroundColor = "#696969";
-        sel.listSelectedIted = fn.idGen(elem);                    
-        elem.focus();
     },
     idGen: function () {
         var i = 0, d = "list" + (new Date() * 1).toString(16);
@@ -21,11 +23,11 @@ fn = {
             return (obj.id = d + (i++).toString(16));
         }               
     }(),
-    getFileList: function(dirName) {
+    getFileList: function(dirPath) {
         $.ajax({
             url: '/filelist',
             type: "POST",
-            data: {dirName: dirName},
+            data: {dirPath: dirPath},
         })
         .done(function(res) {
             var files = JSON.parse(res).files,
@@ -46,7 +48,7 @@ fn = {
     keydown: function (e, elem) {
         var key = e.keyCode,
             elem = e.target,
-            listItem = $("#fileList");
+            listItem = $("#fileList").get(0);
 
         if (key == 38) {
             elem.previousElementSibling ? 
@@ -58,7 +60,7 @@ fn = {
                 this.focus(listItem.firstElementChild);
         } else if (key == 13) {
             this.getFileList();
-
+            delete listItem.listSelectedItem;
         }                      
     },
     setEvent: function () {
@@ -68,11 +70,12 @@ fn = {
         .on("keydown", function () {
             fn.keydown(event, this);
         })
-        .on("dblclick", function () {
-            fn.getFileList();
+        .on("dblclick", "li", function () {
+            fn.getFileList("C:\\Windows");
+            delete this.listSelectedItem;
         });
     }
 
 };
 
-fn.getFileList("C:\\");
+fn.getFileList();
