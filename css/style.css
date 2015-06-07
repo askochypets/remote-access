@@ -43,3 +43,14 @@ body{
 #wrapper ul li:focus{
     outline: none;
 }
+#path {
+    background: #00BBFF;
+    box-shadow: inset 0px 0px 8px 0px #000000;
+    min-height: 25px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    padding: 0 20px;
+    color: #414141;
+    line-height: 25px;
+    text-shadow: 0 0 5px #fff;
+}
