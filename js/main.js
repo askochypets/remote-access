@@ -46,10 +46,10 @@ fn = {
                 }
                 delete $("#fileList").get(0).listSelectedItem;
 
-                fn.isFile($("li"));
+                fn.setFileIcon($("li"));
                 fn.setEvent();
             } else {
-                $("#path").html(fn.removePath());
+                fn.removePath();
                 console.log("forbidden!");
             }
         })
@@ -86,7 +86,7 @@ fn = {
             fn.sendRequest(event.target);
         });
     },
-    isFile: function (arrOfElem) {
+    setFileIcon: function (arrOfElem) {
         var ext;
         $.each(arrOfElem, function (index, element) {
             ext = $(element).html().split(".");
@@ -104,15 +104,25 @@ fn = {
     removePath: function () {
         var arr = $("#path").html().split("\\");
         arr.splice(-2);
-        return arr.join("\\") + "\\";
+        $("#path").html(arr.join("\\") + "\\");
+        return $("#path").html();
     },
     sendRequest: function (element) {
         var isFile = $(element).hasClass("file");
         if (!isFile) {
             fn.getFileList(fn.setPath($(element).html()));    
         }
+    },
+    stepBack: function () {
+        
+        fn.getFileList(fn.removePath());
     }
 
 };
+$(document).ready(function () {
+    $("#stepBack").on("click", function () {
+        fn.stepBack();
+    });
+});
 
 fn.getFileList();

@@ -10,7 +10,9 @@ body{
     line-height: 2em;
 }
 #wrapper{
-    width: 450px;
+    min-width: 350px;
+    max-width: 450px;
+    overflow: hidden;
     margin: 0 auto;
     font-size: 1.8em;
     border: 2px solid #00BBFF;
@@ -21,36 +23,57 @@ body{
     background: #414141;
     color: #2CC0F5;
 }
-#wrapper ul{
+#fileList {
     list-style-type: none;
     margin: 0;
     padding: 0;
     line-height: 1.3em;
 }
-#wrapper ul li{
+#fileList li{
     cursor: pointer;
     padding: 0 20px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    user-select: none;
     background: url(../img/folder.png) 0 3px no-repeat;
+    -webkit-transition: all 0.3s ease 0s;
+    -moz-transition: all 0.3s ease 0s;
+    -o-transition: all 0.3s ease 0s;
+    transition: all 0.3s ease 0s;
 }
-#wrapper ul li.file {
-    background: url(../img/file.png) 0 3px no-repeat;   
+#fileList li.file {
+    background: url(../img/file.png) 0 3px no-repeat; 
 }
-#wrapper ul li:focus{
+#fileList li.file:hover, 
+#fileList li.file:focus,
+#fileList li:hover,
+#fileList li:focus {
+    position: relative;
+    left: 10px;
     outline: none;
 }
+header {
+    font-size: 0; 
+}
+#stepBack {
+    display: inline-block;
+    height: 20px;
+    width: 18px;
+    vertical-align: top;
+    margin-right: 15px;
+    cursor: pointer;
+    background: url(../img/backward.png) 0 0 no-repeat;
+}
 #path {
+    display: inline-block;
+    width: 80%;
+    font-size: 18px;
     background: #00BBFF;
     box-shadow: inset 0px 0px 8px 0px #000000;
     min-height: 25px;
+    max-height: 25px;
     margin-bottom: 10px;
     border-radius: 5px;
     padding: 0 20px;
     color: #414141;
     line-height: 25px;
     text-shadow: 0 0 5px #fff;
+    overflow: hidden;
 }
