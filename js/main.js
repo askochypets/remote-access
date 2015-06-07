@@ -39,6 +39,7 @@ fn = {
             
             $("#fileList").html(arr.join(""));
 
+            fn.isFile($("li"));
             fn.setEvent();
         })
         .fail(function() {
@@ -73,6 +74,15 @@ fn = {
         .on("dblclick", "li", function () {
             fn.getFileList("C:\\Windows");
             delete this.listSelectedItem;
+        });
+    },
+    isFile: function (arrOfElem) {
+        var ext;
+        $.each(arrOfElem, function (index, element) {
+            ext = $(element).html().split(".");
+            if (ext[1] !== undefined) {
+                $(element).addClass("file");
+            }
         });
     }
 

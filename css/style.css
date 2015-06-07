@@ -29,13 +29,16 @@ body{
 }
 #wrapper ul li{
     cursor: pointer;
-    padding: 0 10px;
+    padding: 0 20px;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     -o-user-select: none;
     user-select: none;
-    
+    background: url(../img/folder.png) 0 3px no-repeat;
+}
+#wrapper ul li.file {
+    background: url(../img/file.png) 0 3px no-repeat;   
 }
 #wrapper ul li:focus{
     outline: none;
