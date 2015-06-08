@@ -47,7 +47,6 @@ fn = {
                 delete $("#fileList").get(0).listSelectedItem;
 
                 fn.setFileIcon($("li"));
-                fn.setEvent();
             } else {
                 fn.removePath();
                 console.log("forbidden!");
@@ -123,6 +122,7 @@ $(document).ready(function () {
     $("#stepBack").on("click", function () {
         fn.stepBack();
     });
+    fn.setEvent();
 });
 
 fn.getFileList();
