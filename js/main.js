@@ -84,6 +84,10 @@ fn = {
         .on("dblclick", "li", function () {
             fn.sendRequest(event.target);
         });
+        $("#stepBack").on("click", function () {
+            //step back
+            fn.getFileList(fn.removePath());
+        });
     },
     setFileIcon: function (arrOfElem) {
         var ext;
@@ -111,17 +115,10 @@ fn = {
         if (!isFile) {
             fn.getFileList(fn.setPath($(element).html()));    
         }
-    },
-    stepBack: function () {
-        
-        fn.getFileList(fn.removePath());
     }
 
 };
-$(document).ready(function () {
-    $("#stepBack").on("click", function () {
-        fn.stepBack();
-    });
+$(document).ready(function () {    
     fn.setEvent();
 });
 
