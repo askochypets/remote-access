@@ -24,15 +24,15 @@ var fn = {
   },
   createJson: function (path) {
     var rootPath,
+        fileList,
         json = {};
     try {
       //receive a specified path or path to root directory
       rootPath = path || fn.getSystemDir(process.env.SystemDrive);
-      json.files = fs.readdirSync(rootPath);
+      fileList = fs.readdirSync(rootPath);
+      json.files = fn.getNewList(fileList, rootPath);
       json.root = rootPath;
-      fn.isFile(rootPath);
 
-      
       //convert to json format
       return JSON.stringify(json);     
     } catch (err) {     
@@ -42,21 +42,21 @@ var fn = {
   hint: function () {
     console.log("\r\n\n\t\t\tERROR! Please try again.");
   },
-  isFile: function (rootPath) {
-    var path,
-        fileList = fs.readdirSync(rootPath);
+  getNewList: function (fileList, path) {
+    var newFileList = {};
 
-    for (var index in fileList) {
-        try {
-          path = rootPath + fileList[index];
-          console.log(fs.lstatSync(path).isFile());  
-        } catch (err) {
-          console.log("err");
-        }
-        
-    };
-    
-    
+    for (index in fileList) {
+      try {
+        newFileList[index] = {
+          name: fileList[index],
+          dir: fs.statSync(path + fileList[index]).isDirectory()
+        }          
+      } catch (err) {
+        fn.hint();
+      }
+      
+    }
+    return newFileList;
   }
 };
 

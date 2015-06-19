@@ -36,8 +36,15 @@ fn = {
                     arr = [];
                     path = $("#path");
 
-                $.each(files, function (index, element) {
-                    arr.push('<li tabindex="0">' + element + '</li>');
+                $.each(files, function (key, value) {
+                    
+                    console.log(value.dir);
+                    if (value.dir) {
+                        arr.push('<li tabindex="0">' + value.name + '</li>');
+                    } else {
+                        arr.push('<li tabindex="0" class="file">' + value.name + '</li>');
+                    }
+                    
                 });
                 $("#fileList").html(arr.join(""));
 
@@ -45,8 +52,6 @@ fn = {
                     path.html(root);
                 }
                 delete $("#fileList").get(0).listSelectedItem;
-
-                fn.setFileIcon($("li"));
             } else {
                 fn.removePath();
                 console.log("forbidden!");
@@ -87,15 +92,6 @@ fn = {
         $("#stepBack").on("click", function () {
             //step back
             fn.getFileList(fn.removePath());
-        });
-    },
-    setFileIcon: function (arrOfElem) {
-        var ext;
-        $.each(arrOfElem, function (index, element) {
-            ext = $(element).html().split(".");
-            if (ext[1] !== undefined) {
-                $(element).addClass("file");
-            }
         });
     },
     setPath: function (text) {
