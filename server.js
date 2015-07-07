@@ -9,7 +9,7 @@ app.use(express.static(__dirname));
 
 app.post('/filelist', urlencodedParser, function (req, res) {
     var data = fn.createJson(req.body.dirPath);
-    
+
     if (data != undefined) {
       res.send(data);
     } else {
@@ -18,20 +18,18 @@ app.post('/filelist', urlencodedParser, function (req, res) {
 });
 
 var fn = {
-  getSystemDir: function (path) {
-    var arr = path.split("\\");     
-    return arr[0] + "\\";
-  },
   createJson: function (path) {
-    var rootPath,
-        fileList,
-        json = {};
-    try {
+    var json = {};
+
+    try {      
       //receive a specified path or path to root directory
-      rootPath = path || fn.getSystemDir(process.env.SystemDrive);
-      fileList = fs.readdirSync(rootPath);
-      json.files = fn.getNewList(fileList, rootPath);
-      json.root = rootPath;
+      if (path !== undefined) {
+        json.files = fn.getNewList(fs.readdirSync(path), path);
+        json.root = path;
+      } else {
+        json.files = fn.existingDrives();
+        json.root = "";
+      }
 
       //convert to json format
       return JSON.stringify(json);     
@@ -57,6 +55,27 @@ var fn = {
       
     }
     return newFileList;
+  },
+  //check that drive is exist
+  //return array of existing drives
+  existingDrives: function () {
+      var possibleDrives = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
+          existDrives = {};
+
+      for (index in possibleDrives) {
+        try {
+          if (fs.statSync(possibleDrives[index] + ":\\")) {
+            existDrives[index] = {
+              name: possibleDrives[index].toUpperCase() + ":",
+              dir: "drive"
+            }
+          }  
+        } catch (err) {
+          //...
+        }
+        
+      }
+      return existDrives;
   }
 };
 

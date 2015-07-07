@@ -39,15 +39,28 @@ body{
     transition: all 0.3s ease 0s;
 }
 #fileList li.file {
-    background: url(../img/file.png) 0 3px no-repeat; 
+    background: url(../img/file.png) 0 3px no-repeat;
 }
-#fileList li.file:hover, 
-#fileList li.file:focus,
 #fileList li:hover,
 #fileList li:focus {
     position: relative;
     left: 10px;
     outline: none;
+}
+#fileList li.drive {
+    width: 72px;
+    height: 72px;
+    display: inline-block;
+    background: url(../img/drive.png) center top no-repeat; 
+    text-align: center;
+    line-height: 160px;
+    padding-bottom: 25px;
+}
+#fileList li.drive:hover,
+#fileList li.drive:focus {
+    position: static;
+    -webkit-background-size: 70%;
+    background-size: 70%;
 }
 header {
     font-size: 0; 

@@ -1,3 +1,4 @@
+var xhr,
 fn = {
     focus: function (elem) {
         var sel = $("#fileList").get(0);
@@ -24,7 +25,8 @@ fn = {
         }               
     }(),
     getFileList: function(dirPath) {
-        $.ajax({
+        if (xhr) xhr.abort();
+        xhr = $.ajax({
             url: '/filelist',
             type: "POST",
             data: {dirPath: dirPath},
@@ -37,9 +39,9 @@ fn = {
                     path = $("#path");
 
                 $.each(files, function (key, value) {
-                    
-                    console.log(value.dir);
-                    if (value.dir) {
+                    if (value.dir === "drive") {
+                        arr.push('<li tabindex="0" class="drive">' + value.name + '</li>');
+                    } else if (value.dir === true) {
                         arr.push('<li tabindex="0">' + value.name + '</li>');
                     } else {
                         arr.push('<li tabindex="0" class="file">' + value.name + '</li>');
@@ -60,18 +62,17 @@ fn = {
         .fail(function() {
             console.log("ajax send fail");
         });
-
     },
     keydown: function (e, elem) {
         var key = e.keyCode,
             elem = e.target,
             listItem = $("#fileList").get(0);
 
-        if (key == 38) {
+        if (key == 38 || key == 39) {
             elem.previousElementSibling ? 
                 this.focus(elem.previousElementSibling) : 
                 this.focus(listItem.lastElementChild);
-        } else if (key == 40) {
+        } else if (key == 37 || key == 40) {
             elem.nextElementSibling ? 
                 this.focus(elem.nextElementSibling) : 
                 this.focus(listItem.firstElementChild);
@@ -90,8 +91,12 @@ fn = {
             fn.sendRequest(event.target);
         });
         $("#stepBack").on("click", function () {
-            //step back
-            fn.getFileList(fn.removePath());
+            if (fn.removePath() === "") {
+                fn.getFileList();
+            } else {
+                //step back
+                fn.getFileList($("#path").html());
+            }            
         });
     },
     setPath: function (text) {
@@ -103,7 +108,11 @@ fn = {
     removePath: function () {
         var arr = $("#path").html().split("\\");
         arr.splice(-2);
-        $("#path").html(arr.join("\\") + "\\");
+        if (arr.length > 0) {
+            $("#path").html(arr.join("\\") + "\\");    
+        } else {
+            $("#path").html("");
+        }        
         return $("#path").html();
     },
     sendRequest: function (element) {
