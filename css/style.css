@@ -33,18 +33,17 @@ body{
     cursor: pointer;
     padding: 0 20px;
     background: url(../img/folder.png) 0 3px no-repeat;
-    -webkit-transition: all 0.3s ease 0s;
-    -moz-transition: all 0.3s ease 0s;
-    -o-transition: all 0.3s ease 0s;
-    transition: all 0.3s ease 0s;
+    -webkit-transition: all 0.2s ease 0s;
+    -moz-transition: all 0.2s ease 0s;
+    -o-transition: all 0.2s ease 0s;
+    transition: all 0.2s ease 0s;
 }
 #fileList li.file {
     background: url(../img/file.png) 0 3px no-repeat;
 }
 #fileList li:hover,
 #fileList li:focus {
-    position: relative;
-    left: 10px;
+    margin-left: 10px;
     outline: none;
 }
 #fileList li.drive {
@@ -55,12 +54,16 @@ body{
     text-align: center;
     line-height: 160px;
     padding-bottom: 25px;
+    margin-right: 10px;
 }
 #fileList li.drive:hover,
 #fileList li.drive:focus {
-    position: static;
-    -webkit-background-size: 70%;
-    background-size: 70%;
+    margin-left: 0;
+    -webkit-transform: scale(1.08);
+       -moz-transform: scale(1.08);
+        -ms-transform: scale(1.08);
+         -o-transform: scale(1.08);
+            transform: scale(1.08);
 }
 header {
     font-size: 0; 
