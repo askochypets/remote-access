@@ -1,31 +1,37 @@
 var http = require("http"),
     fs = require("fs"),
     express = require("express"),
-    app = express();
+    app = express(),
+    bodyParser = require("body-parser"),
+    urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 app.use(express.static(__dirname));
 
-app.post("/connect", function (req, res) {
-  res.send(fn.createJson());  
-});
+app.post('/filelist', urlencodedParser, function (req, res) {
+    var data = fn.createJson(req.body.dirPath);
 
-app.post('/filelist', function (req, res) {
-  res.send(fn.createJson("D:\\"));
+    if (data != undefined) {
+      res.send(data);
+    } else {
+      res.send("error");
+    }    
 });
 
 var fn = {
-  getSystemDir: function (path) {
-    var arr = path.split("\\");     
-    return arr[0] + "\\";
-  },
   createJson: function (path) {
-    var rootPath,
-      json = {};
-    try {
-      //get rootPath to directory
-      rootPath = path || process.argv[2] || fn.getSystemDir(process.env.USERPROFILE);
-      json.files = fs.readdirSync(rootPath);
-      //convert to json format and write into file
+    var json = {};
+
+    try {      
+      //receive a specified path or path to root directory
+      if (path !== undefined) {
+        json.files = fn.getNewList(fs.readdirSync(path), path);
+        json.root = path;
+      } else {
+        json.files = fn.existingDrives();
+        json.root = "";
+      }
+
+      //convert to json format
       return JSON.stringify(json);     
     } catch (err) {     
       fn.hint();
@@ -33,6 +39,43 @@ var fn = {
   },
   hint: function () {
     console.log("\r\n\n\t\t\tERROR! Please try again.");
+  },
+  getNewList: function (fileList, path) {
+    var newFileList = {};
+
+    for (index in fileList) {
+      try {
+        newFileList[index] = {
+          name: fileList[index],
+          dir: fs.statSync(path + fileList[index]).isDirectory()
+        }          
+      } catch (err) {
+        fn.hint();
+      }
+      
+    }
+    return newFileList;
+  },
+  //check that drive is exist
+  //return array of existing drives
+  existingDrives: function () {
+      var possibleDrives = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
+          existDrives = {};
+
+      for (index in possibleDrives) {
+        try {
+          if (fs.statSync(possibleDrives[index] + ":\\")) {
+            existDrives[index] = {
+              name: possibleDrives[index].toUpperCase() + ":",
+              dir: "drive"
+            }
+          }  
+        } catch (err) {
+          //...
+        }
+        
+      }
+      return existDrives;
   }
 };
 

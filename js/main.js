@@ -1,14 +1,17 @@
+var xhr,
 fn = {
     focus: function (elem) {
         var sel = $("#fileList").get(0);
 
-        if (sel.listSelectedIted) {
-            document.getElementById(sel.listSelectedIted).style.backgroundColor = "#414141";
-            document.getElementById(sel.listSelectedIted).removeAttribute('id');
+        if (elem.id !== sel.listSelectedItem) {
+            if (sel.listSelectedItem) {
+                document.getElementById(sel.listSelectedItem).style.backgroundColor = "#414141";
+                document.getElementById(sel.listSelectedItem).removeAttribute('id');
+            }
+            elem.style.backgroundColor = "#696969";
+            sel.listSelectedItem = fn.idGen(elem);                    
+            elem.focus();
         }
-        elem.style.backgroundColor = "#696969";
-        sel.listSelectedIted = fn.idGen(elem);                    
-        elem.focus();
     },
     idGen: function () {
         var i = 0, d = "list" + (new Date() * 1).toString(16);
@@ -21,44 +24,60 @@ fn = {
             return (obj.id = d + (i++).toString(16));
         }               
     }(),
-    getFileList: function(dirName) {
-        $.ajax({
+    getFileList: function(dirPath) {
+        if (xhr) xhr.abort();
+        xhr = $.ajax({
             url: '/filelist',
             type: "POST",
-            data: {dirName: dirName},
+            data: {dirPath: dirPath},
         })
         .done(function(res) {
-            var files = JSON.parse(res).files,
-                arr = [];
+            if (res != "error") {
+                var files = JSON.parse(res).files,
+                    root = JSON.parse(res).root,
+                    arr = [];
+                    path = $("#path");
 
-            $.each(files, function (index, element) {
-                arr.push('<li tabindex="0">' + element + '</li>');
-            });
-            
-            $("#fileList").html(arr.join(""));
+                $.each(files, function (key, value) {
+                    if (value.dir === "drive") {
+                        arr.push('<li tabindex="0" class="drive">' + value.name + '</li>');
+                    } else if (value.dir === true) {
+                        arr.push('<li tabindex="0">' + value.name + '</li>');
+                    } else {
+                        arr.push('<li tabindex="0" class="file">' + value.name + '</li>');
+                    }
+                    
+                });
+                $("#fileList").html(arr.join(""));
 
-            fn.setEvent();
+                if (path.html() == "") {
+                    path.html(root);
+                }
+                delete $("#fileList").get(0).listSelectedItem;
+            } else {
+                fn.removePath();
+                console.log("forbidden!");
+            }
         })
         .fail(function() {
-            console.log("error");
+            console.log("ajax send fail");
         });
     },
     keydown: function (e, elem) {
         var key = e.keyCode,
             elem = e.target,
-            listItem = $("#fileList");
+            listItem = $("#fileList").get(0);
 
-        if (key == 38) {
+        if (key == 38 || key == 39) {
             elem.previousElementSibling ? 
                 this.focus(elem.previousElementSibling) : 
                 this.focus(listItem.lastElementChild);
-        } else if (key == 40) {
+        } else if (key == 37 || key == 40) {
             elem.nextElementSibling ? 
                 this.focus(elem.nextElementSibling) : 
                 this.focus(listItem.firstElementChild);
         } else if (key == 13) {
-            this.getFileList();
-
+            fn.sendRequest(elem);
         }                      
     },
     setEvent: function () {
@@ -68,11 +87,44 @@ fn = {
         .on("keydown", function () {
             fn.keydown(event, this);
         })
-        .on("dblclick", function () {
-            fn.getFileList();
+        .on("dblclick", "li", function () {
+            fn.sendRequest(event.target);
         });
+        $("#stepBack").on("click", function () {
+            if (fn.removePath() === "") {
+                fn.getFileList();
+            } else {
+                //step back
+                fn.getFileList($("#path").html());
+            }            
+        });
+    },
+    setPath: function (text) {
+        if (!$(event.target).hasClass("file")) {
+            $("#path").html($("#path").html() + text + "\\");
+        }
+        return $("#path").html();
+    },
+    removePath: function () {
+        var arr = $("#path").html().split("\\");
+        arr.splice(-2);
+        if (arr.length > 0) {
+            $("#path").html(arr.join("\\") + "\\");    
+        } else {
+            $("#path").html("");
+        }        
+        return $("#path").html();
+    },
+    sendRequest: function (element) {
+        var isFile = $(element).hasClass("file");
+        if (!isFile) {
+            fn.getFileList(fn.setPath($(element).html()));    
+        }
     }
 
 };
+$(document).ready(function () {    
+    fn.setEvent();
+});
 
-fn.getFileList("C:\\");
+fn.getFileList();
