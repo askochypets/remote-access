@@ -2,14 +2,16 @@ var http = require("http"),
     fs = require("fs"),
     express = require("express"),
     app = express(),
-    bodyParser = require("body-parser"),
-    urlencodedParser = bodyParser.urlencoded({ extended: false });
+    bodyParser = require("body-parser");
+    
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 app.use(express.static(__dirname));
 
-app.post('/filelist', urlencodedParser, function (req, res) {
+app.post('/filelist', function (req, res) {
     var data = fn.createJson(req.body.dirPath);
-
+    
     if (data != undefined) {
       res.send(data);
     } else {
@@ -23,7 +25,7 @@ var fn = {
 
     try {      
       //receive a specified path or path to root directory
-      if (path !== undefined) {
+      if (path !== undefined && path !== "") {
         json.files = fn.getNewList(fs.readdirSync(path), path);
         json.root = path;
       } else {
@@ -47,10 +49,10 @@ var fn = {
       try {
         newFileList[index] = {
           name: fileList[index],
-          dir: fs.statSync(path + fileList[index]).isDirectory()
+          dir: fs.statSync(path + fileList[index]).isDirectory() ? "" : "file"
         }          
       } catch (err) {
-        fn.hint();
+        //...
       }
       
     }
