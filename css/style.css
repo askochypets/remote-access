@@ -12,7 +12,7 @@ body{
 #wrapper{
     min-width: 350px;
     max-width: 450px;
-    overflow: hidden;
+    max-height: 325px;
     margin: 0 auto;
     font-size: 1.8em;
     border: 2px solid #00BBFF;
@@ -24,11 +24,30 @@ body{
     color: #2CC0F5;
 }
 #fileList {
+    max-height: 275px;
     list-style-type: none;
     margin: 0;
     padding: 0;
     line-height: 1.3em;
+    overflow: auto;
 }
+#fileList::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+} 
+#fileList::-webkit-scrollbar-track {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+} 
+#fileList::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #2AB3E4;
+    -webkit-box-shadow: 0 0 4px #333;
+}
+#fileList::-webkit-scrollbar-corner {
+    display: none;
+}
+
 #fileList li{
     cursor: pointer;
     padding: 0 20px;
@@ -47,6 +66,7 @@ body{
     outline: none;
 }
 #fileList li.drive {
+    overflow: hidden;
     width: 72px;
     height: 72px;
     display: inline-block;
@@ -68,6 +88,9 @@ body{
         -ms-transform: scale(1.08);
          -o-transform: scale(1.08);
             transform: scale(1.08);
+}
+#fileList li:focus {
+    background-color: #5c5c5c;
 }
 header {
     font-size: 0; 

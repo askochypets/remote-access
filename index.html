@@ -14,7 +14,7 @@
                 <div id="path">{{dataObj.root}}</div>
             </header>
             <ul id="fileList">
-                <li tabindex="0" ng-repeat="item in dataObj.files"ng-class="item.dir" ng-click="item.dir != 'file' ? getFileList(dataObj.root + item.name + '\\') : asdasd()">{{item.name}}</li>
+                <li tabindex="0" ng-repeat="item in dataObj.files" ng-class="item.dir" ng-dblclick="item.dir != 'file' ? getFileList(dataObj.root + item.name + '\\') : ''" ng-keydown="keyControl($event, item.name)">{{item.name}}</li>
             </ul>
         </div>
     </body>
