@@ -4,22 +4,16 @@ var net = require('net'),
 
 net.createServer(function(sock) {
   console.log('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
-  // var data = fn.createJson("C:\\");
-  // if (data != undefined) {
-  //   socket.write(JSON.stringify(data));
-  //   socket.pipe(socket);
-  // } else {
-  //   console.log("ERROR!!!")
-  // }
 
   sock.on('data', function(data) {
-    console.log('DATA ' + sock.remoteAddress + ': ' + data);
-
-    sock.write('You said "' + data + '"');
+    var newData = fn.createJson(data + "\\");
+    if (newData != undefined) {
+      sock.write(JSON.stringify(newData));
+    }    
   });
 
-  sock.on('close', function(data) {
-    console.log('CLOSED: ' + sock.remoteAddress +' '+ sock.remotePort);
+  sock.on('end', function() {
+    console.log('CLOSED');
   });
 }).listen(1337, '127.0.0.1');
 

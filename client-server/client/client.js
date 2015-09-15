@@ -3,9 +3,9 @@ var net = require('net');
 var client = new net.Socket();
 client.connect(1337, '127.0.0.1', function() {
 
-    console.log('CONNECTED TO: 127.0.0.1 1331');
+    console.log('CONNECTED TO: 127.0.0.1 1337');
     // Write a message to the socket as soon as the client is connected, the server will receive it as message from the client 
-    client.write('I am Chuck Norris!');
+    client.write('C:');
 
 });
 
