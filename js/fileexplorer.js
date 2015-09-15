@@ -2,7 +2,7 @@ var app = angular.module("fileExplorer", []);
 
 app.controller("fileExplorerCtrl", function ($scope, $http) {
 	$scope.getFileList = function (dirPath) {
-		$http.post("/filelist", {dirPath: dirPath})
+		$http.post("127.0.0.1/filelist", {dirPath: dirPath})
 		.success(function (data) {
 			$scope.dataObj = {
 				files: data.files,
@@ -62,7 +62,5 @@ app.controller("fileExplorerCtrl", function ($scope, $http) {
 				elem.parentElement.lastElementChild.focus();
 			}
 		}
-	} 
-
-	$scope.getFileList();
+	}
 });

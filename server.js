@@ -1,23 +1,27 @@
-var http = require("http"),
-    fs = require("fs"),
-    express = require("express"),
-    app = express(),
-    bodyParser = require("body-parser");
-    
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+var net = require('net'),
+    fs = require("fs");
 
-app.use(express.static(__dirname));
 
-app.post('/filelist', function (req, res) {
-    var data = fn.createJson(req.body.dirPath);
-    
-    if (data != undefined) {
-      res.send(data);
-    } else {
-      res.send("error");
-    }    
-});
+net.createServer(function(sock) {
+  console.log('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
+  // var data = fn.createJson("C:\\");
+  // if (data != undefined) {
+  //   socket.write(JSON.stringify(data));
+  //   socket.pipe(socket);
+  // } else {
+  //   console.log("ERROR!!!")
+  // }
+
+  sock.on('data', function(data) {
+    console.log('DATA ' + sock.remoteAddress + ': ' + data);
+
+    sock.write('You said "' + data + '"');
+  });
+
+  sock.on('close', function(data) {
+    console.log('CLOSED: ' + sock.remoteAddress +' '+ sock.remotePort);
+  });
+}).listen(1337, '127.0.0.1');
 
 var fn = {
   createJson: function (path) {
@@ -36,11 +40,8 @@ var fn = {
       //convert to json format
       return JSON.stringify(json);     
     } catch (err) {     
-      fn.hint();
+      throw err;
     }
-  },
-  hint: function () {
-    console.log("\r\n\n\t\t\tERROR! Please try again.");
   },
   getNewList: function (fileList, path) {
     var newFileList = {};
@@ -81,6 +82,4 @@ var fn = {
   }
 };
 
-app.listen(3000);
-
-console.log("listening on 3000");
+console.log('Server listening on 127.0.0.1 1337');

@@ -16,6 +16,7 @@
             <ul id="fileList">
                 <li tabindex="0" ng-repeat="item in dataObj.files" ng-class="item.dir" ng-dblclick="item.dir != 'file' ? getFileList(dataObj.root + item.name + '\\') : ''" ng-keydown="keyControl($event, item.name)">{{item.name}}</li>
             </ul>
+            <input type="button" value="Connect" ng-click="getFileList()"></input>
         </div>
     </body>
 </html>
