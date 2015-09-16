@@ -4,23 +4,35 @@ var	net = require('net'),
 var app = angular.module("fileExplorer", []);
 
 app.controller("fileExplorerCtrl", function ($scope) {
+	client.setEncoding('utf8');
+	client.on('data', function(response) {
+		var data = JSON.parse(response);
+
+		$scope.$apply(function () {
+            $scope.dataObj = {
+				files: data.files,
+				root: data.root
+			}
+        });
+	});
+
+	client.on('error', function() {
+    	client.destroy();
+    	$scope.$apply(function () {
+            $scope.dataObj = null;
+        });
+    	console.log('Client error!');
+  	}); 
+
+	client.on('close', function() {
+	    client.destroy();
+	    console.log('Connection closed');
+	});
+	
 	$scope.getConnect = function () {
 		client.connect(1337, '127.0.0.1', function() {
 		    console.log('CONNECTED TO: 127.0.0.1 1337');
-		});
-
-		client.on('data', function(response) {
-			var data = JSON.parse(response),
-				newData = JSON.parse(data);
-
-		    $scope.dataObj = {
-				files: newData.files,
-				root: newData.root,
-			}
-		});
-
-		client.on('close', function() {
-		    console.log('Connection closed');
+		    client.write("/");
 		});
 	}
 	$scope.getNewData = function (path) {

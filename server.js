@@ -5,14 +5,22 @@ var net = require('net'),
 net.createServer(function(sock) {
   console.log('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
 
+  sock.setEncoding('utf8');
   sock.on('data', function(data) {
-    var newData = fn.createJson(data + "\\");
+    var newData = fn.createJson(data);
+
     if (newData != undefined) {
       sock.write(JSON.stringify(newData));
     }    
   });
 
-  sock.on('end', function() {
+  sock.on('error', function() {
+    sock.resume();
+    console.log('Server error!');
+  });  
+
+  sock.on('close', function() {
+    sock.destroy();
     console.log('CLOSED');
   });
 }).listen(1337, '127.0.0.1');
@@ -23,7 +31,7 @@ var fn = {
 
     try {      
       //receive a specified path or path to root directory
-      if (path !== undefined && path !== "") {
+      if (path && path !== "/") {
         json.files = fn.getNewList(fs.readdirSync(path), path);
         json.root = path;
       } else {
@@ -32,7 +40,7 @@ var fn = {
       }
 
       //convert to json format
-      return JSON.stringify(json);     
+      return json;     
     } catch (err) {     
       throw err;
     }
