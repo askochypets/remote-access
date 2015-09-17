@@ -13,11 +13,12 @@
                 <div id="stepBack" ng-click="stepBack(dataObj.root)"></div>
                 <div id="path">{{dataObj.root}}</div>
             </header>
-            <ul id="fileList">
-                <li tabindex="0" ng-repeat="item in dataObj.files" ng-class="item.dir" ng-dblclick="item.dir != 'file' ? getFileList(dataObj.root + item.name + '\\') : ''" ng-keydown="keyControl($event, item.name)">{{item.name}}</li>
+            <ul id="fileList" ng-if="dataObj">
+                <li tabindex="0" ng-repeat="item in dataObj.files" ng-class="item.dir" ng-dblclick="item.dir != 'file' ? getNewData(dataObj.root + item.name + '\\') : ''" ng-keydown="keyControl($event, item.name)">{{item.name}}</li>
             </ul>
-            <input type="button" value="Connect" ng-click="getConnect()"></input>
-            <input type="button" value="Get" ng-click="getNewData(dataObj.root)" ng-if="dataObj"></input>
+            <div class="btn-wrapper">
+                <input type="button" value="{{dataObj ? 'Disconnect' : 'Connect'}}" class="btn hvr-hang" ng-class="{ 'disconnect': dataObj, 'connect': !dataObj }" ng-click="dataObj ? disconnect() : getConnect()"></input>
+            </div>            
         </div>
     </body>
 </html>
