@@ -29,14 +29,20 @@ app.controller("fileExplorerCtrl", function ($scope) {
         console.log('Connection closed');
     });
     
-    $scope.getConnect = function () {
-        client.connect(1337, '127.0.0.1', function() {
-            console.log('CONNECTED TO: 127.0.0.1 1337');
+    $scope.getConnect = function (ip, port) {
+        client.connect(port, ip, function() {
+            console.log('CONNECTED TO: ' + ip + ":" + port);
             client.write("/");
         });
     }
+    $scope.ipParser = function (value) {
+        return {
+            ip: value.split(":")[0],
+            port: value.split(":")[1]
+        }
+    }
     $scope.disconnect = function () {
-        client.destroy();
+        client.end();
         $scope.dataObj = null;
     }
     $scope.getNewData = function (path) {
@@ -95,6 +101,16 @@ app.controller("fileExplorerCtrl", function ($scope) {
                 elem.previousElementSibling.focus();
             } else {
                 elem.parentElement.lastElementChild.focus();
+            }
+        }
+    }
+    //if form submitted without error - start connect;
+    $scope.checkForm = function (value) {
+        if (value) {
+            if (!$scope.dataObj) {
+                $scope.getConnect($scope.ipParser($scope.connectIp).ip, $scope.ipParser($scope.connectIp).port);                
+            } else {
+                $scope.disconnect();
             }
         }
     }

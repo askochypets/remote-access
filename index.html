@@ -9,16 +9,25 @@
     </head>
     <body ng-controller="fileExplorerCtrl">
         <div id="wrapper">
-            <header>
+            <div class="connectIp-wrapper" ng-if="!dataObj" >
+                <input ng-model="$root.connectIp" type="text" placeholder="127.0.0.1:3000" class="setIp" maxlength="30">
+                <div class="errMsgs" ng-show="form.$submitted || form.connectIp.$touched">
+                    <span ng-show="form.connectIp.$error.required">Please provide IP adress:Port  </span>
+                    <span ng-show="form.connectIp.$error.pattern">IP adress is not valid. It should be 127.0.0.1:3000</span>
+                </div>    
+            </div>            
+            <header ng-if="dataObj">
                 <div id="stepBack" ng-click="stepBack(dataObj.root)"></div>
                 <div id="path">{{dataObj.root}}</div>
             </header>
             <ul id="fileList" ng-if="dataObj">
                 <li tabindex="0" ng-repeat="item in dataObj.files" ng-class="item.dir" ng-dblclick="item.dir != 'file' ? getNewData(dataObj.root + item.name + '\\') : ''" ng-keydown="keyControl($event, item.name)">{{item.name}}</li>
             </ul>
-            <div class="btn-wrapper">
-                <input type="button" value="{{dataObj ? 'Disconnect' : 'Connect'}}" class="btn hvr-hang" ng-class="{ 'disconnect': dataObj, 'connect': !dataObj }" ng-click="dataObj ? disconnect() : getConnect()"></input>
-            </div>            
+            <form name="form" novalidate>
+                <input name="connectIp" ng-model="$root.connectIp" type="text" required ng-pattern="/^([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{1,4})$/" ng-hide="true">
+
+                <input type="submit" value="{{dataObj ? 'Disconnect' : 'Connect'}}" class="btn hvr-hang" ng-class="{ 'disconnect': dataObj, 'connect': !dataObj }" ng-click="checkForm(form.connectIp.$valid)"></input>
+            </form>            
         </div>
     </body>
 </html>

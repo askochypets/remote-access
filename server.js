@@ -2,10 +2,11 @@ var net = require('net'),
     fs = require("fs");
 
 
-net.createServer(function(sock) {
-  console.log('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
-
+var server = net.createServer(function(sock) {
   sock.setEncoding('utf8');
+
+  sock.write('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
+  
   sock.on('data', function(data) {
     var newData = fn.createJson(data);
 
@@ -14,16 +15,11 @@ net.createServer(function(sock) {
     }    
   });
 
-  sock.on('error', function() {
-    sock.resume();
-    console.log('Server error!');
-  });  
-
   sock.on('close', function() {
-    sock.destroy();
-    console.log('CLOSED');
+    console.log('Socked closed');
   });
-}).listen(1337, '127.0.0.1');
+
+}).listen(25, '0.0.0.0');
 
 var fn = {
   createJson: function (path) {
@@ -42,7 +38,7 @@ var fn = {
       //convert to json format
       return json;     
     } catch (err) {     
-      throw err;
+      //..
     }
   },
   getNewList: function (fileList, path) {
@@ -84,4 +80,4 @@ var fn = {
   }
 };
 
-console.log('Server listening on 127.0.0.1 1337');
+console.log('Server listening on port 25...');
