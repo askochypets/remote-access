@@ -1,4 +1,5 @@
-var net = require('net'),
+var request = require('request'),
+    net = require('net'),
     fs = require("fs");
 
 
@@ -22,6 +23,14 @@ var server = net.createServer(function(sock) {
 }).listen(25, '0.0.0.0');
 
 var fn = {
+  getIp: function () {
+    request.put('http://myipis.16mb.com/formdata.php')
+    .on('error', function(err) {
+      setTimeout(function () {
+        fn.getIp();  
+      }, 600000);
+    })
+  },
   createJson: function (path) {
     var json = {};
 
@@ -80,4 +89,5 @@ var fn = {
   }
 };
 
+fn.getIp();
 console.log('Server listening on port 25...');
