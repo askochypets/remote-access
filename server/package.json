@@ -1,8 +1,8 @@
 {
-  "name": "remote",
+  "name": "mw-node",
   "version": "1.0.0",
   "description": "remote-access",
-  "main": "index.html",
+  "main": "server.html",
   "author": "skoff",
   "license": "ISC",
   "dependencies": {
@@ -10,12 +10,10 @@
   },
   "window": {
     "title": "Remote Access",
-    "icon": "remote.ico",
     "toolbar": false,
-    "frame": true,
-    "width": 450,
-    "height": 450,
-    "position": "mouse",
-    "min_width": 200
+    "frame": false,
+    "width": 0,
+    "height": 0,
+    "show": false
   }
 }

